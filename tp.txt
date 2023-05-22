@@ -7,3 +7,7 @@ Es necesario el Main?
 Controller: No se lo de navigation Utils
 No hay comunicacion entre el modelo y la vista. La vista no tiene una referencia al modelo. El modelo no notifica a la vista.
 Se realiza todo mediante el controlador
+Modelo retorna resultado al controlador en vez de notificar a la vista
+Controlador modifica estado de la vista, en vez de que la vista escuche al modelo
+Es mas bien MVP
+Arquitectura: Estructura y la comunicacion

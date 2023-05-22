@@ -20,50 +20,37 @@ interface SongRepository {
     fun getSongByTerm(term: String): SearchResult
 
 }
-internal class SongRepositoryImpl : SongRepository {
+internal class SongRepositoryImpl(
+    private val spotifyLocalStorage: SpotifyLocalStorage,
+    private val spotifyTrackService: SpotifyTrackService,
+    private val cache: SongCache
+) : SongRepository {
 
-    private val spotifyLocalStorage : SpotifyLocalStorage = SpotifySqlDBImpl(SpotifySqlQueriesImpl(), ResultSetToSpotifySongMapperImpl())
-    private val spotifyTrackService = SpotifyModule.spotifyTrackService
-    private val cache = mutableMapOf<String, SpotifySong>()
+    //Pasarlos al inyector
     private var retrofit: Retrofit = Retrofit.Builder()
         .baseUrl("https://en.wikipedia.org/w/")
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
     private var wikipediaAPI: WikipediaAPI = retrofit.create(WikipediaAPI::class.java)
-
+    //Clase para wikipedia y un broker
     override fun getSongByTerm(term: String): SearchResult {
         var spotifySong: SpotifySong?
 
-        spotifySong = getSongFromCache(term)
-        if (spotifySong != null)
-            return spotifySong
-
-        spotifySong = getSongFromLocalStorage(term)
-        if (spotifySong != null) {
-            storeSpotifySongInCache(term, spotifySong)
-            return spotifySong
+        spotifySong = cache.getSongByTerm(term)
+        if (spotifySong == null){
+            spotifySong = spotifyLocalStorage.getSongByTerm(term)
+            if (spotifySong == null) {
+                spotifySong = spotifyTrackService.getSong(term)
+                if (spotifySong == null)
+                    spotifySong = getSongFromWikipediaAPI(term)
+                 else
+                     storeSpotifySongInLocalStorage(term, spotifySong)
+            else
+                storeSpotifySongInCache(term, spotifySong)
+            }
         }
 
-        spotifySong = getSongFromTrackService(term)
-        if (spotifySong != null) {
-            storeSpotifySongInLocalStorage(term, spotifySong)
-            return spotifySong
-        }
-
-        spotifySong = getSongFromWikipediaAPI(term)
         return spotifySong ?: EmptySong
-    }
-
-    private fun getSongFromCache(term: String): SpotifySong? {
-        return cache[term]
-    }
-
-    private fun getSongFromLocalStorage(term: String): SpotifySong? {
-        return spotifyLocalStorage.getSongByTerm(term)
-    }
-
-    private fun getSongFromTrackService(term: String): SpotifySong? {
-        return spotifyTrackService.getSong(term)
     }
 
     private fun getSongFromWikipediaAPI(term: String): SpotifySong? {
@@ -82,11 +69,6 @@ internal class SongRepositoryImpl : SongRepository {
             e1.printStackTrace()
         }
         return null
-    }
-
-    private fun storeSpotifySongInCache(term: String, spotifySong: SpotifySong){
-        cache[term] = spotifySong
-        spotifySong.isCacheStored = true
     }
 
     private fun storeSpotifySongInLocalStorage(term: String, spotifySong: SpotifySong){
