@@ -1,7 +1,7 @@
 package ayds.apolo.songinfo.home.view
 
 import ayds.apolo.songinfo.home.model.entities.EmptySong
-import ayds.apolo.songinfo.home.model.entities.SearchResult
+import ayds.apolo.songinfo.home.model.entities.Song
 import ayds.apolo.songinfo.home.model.entities.SpotifySong
 import ayds.apolo.songinfo.home.view.HomeUiState.Companion.DEFAULT_IMAGE
 import ayds.observer.Observable
@@ -17,7 +17,7 @@ interface HomeView {
   val uiState: HomeUiState
 
   fun openView()
-  fun updateSongInfo(song: SearchResult)
+  fun updateSongInfo(song: Song)
 }
 
 internal class HomeViewImpl constructor(
@@ -69,18 +69,18 @@ internal class HomeViewImpl constructor(
     uiState = uiState.copy(actionsEnabled = false)
   }
 
-  override fun updateSongInfo(song: SearchResult) {
+  override fun updateSongInfo(song: Song) {
     SwingUtilities.invokeLater { updateSongInfoSync(song) }
   }
 
-  private fun updateSongInfoSync(song: SearchResult) {
+  private fun updateSongInfoSync(song: Song) {
     updateUiState(song)
     updateSongDescription()
     updateSongImage()
     updateMoreDetailsState()
   }
 
-  private fun updateUiState(song: SearchResult) {
+  private fun updateUiState(song: Song) {
     when(song) {
       is SpotifySong -> updateSongUiState(song)
       EmptySong -> updateNoResultsUiState()

@@ -1,0 +1,29 @@
+https://moodle.uns.edu.ar/moodle/pluginfile.php/1377467/mod_resource/content/1/2023%2002%20AyDS%20-%20Principios%20SOLID.pdf
+SOLID:
+S - Responsabilidad Unica. Una clase y cada funcion deben tener una responsabilidad unica.
+O - Open/Closed. Clases abiertas a extension, cerradas para modificacion -> Uso de interfaces e implementaciones privadas. Si queremos modificar cierta funcionalidad, extendemos. Atributos Privados.
+L - Substitucion. Superclases deben poder ser substituidas por subclases. Clases que extienden no cambian el comportamiento existente, si no que agregan funcionalidad.
+I - Segregacion de Interfaces. Separar interfaces que tienen metodos con diferentes responsabilidades. (Evitar interfaces gordas)
+D - Inversion de Dependencias. Modulos de alto nivel no deben depender de modulos de bajo nivel, ambos deben depender de las mismas abstracciones, no de los detalles de implementacion. Estas Abstracciones no deben depender de detalles de implementacion, si no al reves.
+
+Una Arquitectura define la estructura de los componentes y la comunicacion entre ellos.
+
+
+
+https://moodle.uns.edu.ar/moodle/pluginfile.php/1397697/mod_resource/content/1/mvc.jpg
+MVC: Modelo Vista Controlador
+Modelo envia eventos a la vista. Encapsula el estado de la aplicacion.
+Vista referencia a Modelo, consulta su estado y envia gestos de usuarios como eventos al Controlador.
+Controlador referencia a ambos, define el comportamiento, actualiza el estado del modelo, selecciona la vista.
+
+
+https://moodle.uns.edu.ar/moodle/pluginfile.php/1417518/mod_resource/content/1/AyDS%20-%20MVP%20MVVM%20MVI%20%281%29.pdf
+MVP: Vista y Presenter se referencian. Presenter tiene referencia a Modelo, Modelo envia eventos a Presenter.
+
+
+https://moodle.uns.edu.ar/moodle/pluginfile.php/1397703/mod_resource/content/1/ayds%20arch.jpg
+Clean MVP: Presentacion (Vista, Presenter), Dominio(Entidad, Repositorio), Data(RepoImpl, Local/Externos)
+Vista escucha a Presenter y tiene la referencia. Presenter envia eventos (Presenter es el Controlador)
+Presenter tiene referencia a Repositorio.
+Inyector unico.
+Desbalancear el modelo -> Domain, Data (?????)
